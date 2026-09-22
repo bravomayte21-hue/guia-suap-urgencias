@@ -1,0 +1,167 @@
+{
+  "version": "MAESTRA_V4",
+  "date": "2026-09-22",
+  "clinical_assets": 75,
+  "emergency_linked_assets": 14,
+  "drug_linked_assets": 8,
+  "procedure_linked_assets": 6,
+  "categories": {
+    "🚨 Emergencias vitales": 7,
+    "❤️ Cardiovascular": 11,
+    "🫁 Respiratorio": 6,
+    "👶 Pediatría · Respiratorio": 2,
+    "🧠 Neurología": 4,
+    "👶 Pediatría": 11,
+    "🦴 Trauma y musculoesquelético": 5,
+    "👁️ Oftalmología · ORL · Odontología": 5,
+    "🦠 Infecciosas y antibioterapia": 6,
+    "🚻 Genitourinario": 3,
+    "🤰 Obstetricia": 5,
+    "💊 Farmacología": 5,
+    "☠️ Toxicología": 1,
+    "🧩 Situaciones especiales": 2,
+    "🧠 Salud mental": 2
+  },
+  "procedures": [
+    {
+      "id": "T01",
+      "name": "Canalización de vía venosa periférica",
+      "match": null,
+      "status": "build"
+    },
+    {
+      "id": "T02",
+      "name": "Administración segura IV / IM / SC",
+      "match": null,
+      "status": "build"
+    },
+    {
+      "id": "T03",
+      "name": "Nebulización e inhaladores con cámara",
+      "match": null,
+      "status": "build"
+    },
+    {
+      "id": "T04",
+      "name": "Oxigenoterapia práctica",
+      "match": "Insuficiencia respiratoria / oxigenoterapia",
+      "status": "ready"
+    },
+    {
+      "id": "T05",
+      "name": "Monitor, desfibrilación y cardioversión sincronizada",
+      "match": "Cardioversión sincronizada",
+      "status": "ready"
+    },
+    {
+      "id": "T06",
+      "name": "Vía intraósea · adulto y pediatría",
+      "match": null,
+      "status": "build"
+    },
+    {
+      "id": "T07",
+      "name": "Vía aérea: cánulas, BVM y supraglótico",
+      "match": "Intubación orotraqueal · RSI",
+      "status": "ready"
+    },
+    {
+      "id": "T08",
+      "name": "Aspiración de secreciones",
+      "match": "Intubación orotraqueal · RSI",
+      "status": "ready"
+    },
+    {
+      "id": "T09",
+      "name": "Sutura, adhesivo tisular y grapas",
+      "match": null,
+      "status": "build"
+    },
+    {
+      "id": "T10",
+      "name": "Anestesia local para procedimientos",
+      "match": null,
+      "status": "build"
+    },
+    {
+      "id": "T11",
+      "name": "Vendajes e inmovilización con férulas",
+      "match": "Traumatismos",
+      "status": "ready"
+    },
+    {
+      "id": "T12",
+      "name": "Curas y drenaje de absceso superficial",
+      "match": "Infecciones de piel y partes blandas",
+      "status": "ready"
+    },
+    {
+      "id": "T13",
+      "name": "Taponamiento nasal anterior",
+      "match": "Urgencias ORL",
+      "status": "ready"
+    },
+    {
+      "id": "T14",
+      "name": "Glucemia, cetonemia y POCT",
+      "match": null,
+      "status": "build"
+    },
+    {
+      "id": "T15",
+      "name": "ECG de 12 derivaciones · colocación y artefactos",
+      "match": null,
+      "status": "build"
+    },
+    {
+      "id": "T16",
+      "name": "Sondaje vesical",
+      "match": "ITU y síndrome genitourinario en el varón",
+      "status": "ready"
+    },
+    {
+      "id": "T17",
+      "name": "Transferencia, monitorización y SBAR / IMIST-AMBO",
+      "match": null,
+      "status": "build"
+    },
+    {
+      "id": "T18",
+      "name": "Simulación integrada · crítico hasta transferencia",
+      "match": null,
+      "status": "build"
+    }
+  ],
+  "publication_gates": [
+    {
+      "area": "Antibióticos",
+      "status": "PENDIENTE_VALIDACION",
+      "reason": "Consolidar tabla central y validar con PRAN/PROA/PIRASOA, CIMA y contexto local antes de cierre."
+    },
+    {
+      "area": "Corticoides/comparativas",
+      "status": "PENDIENTE_VALIDACION",
+      "reason": "Construir comparativa única y validar equivalencias/presentaciones; no duplicar dosis por patología."
+    },
+    {
+      "area": "Procedimientos T01-T18",
+      "status": "PARCIAL",
+      "reason": "8 enlazados a contenido existente; 10 requieren ficha práctica propia/consolidación."
+    },
+    {
+      "area": "Farmacología stock real",
+      "status": "PENDIENTE_STOCK",
+      "reason": "Adaptación final de concentraciones/presentaciones a fotos del carro/armario del punto fijo."
+    },
+    {
+      "area": "Calculadoras",
+      "status": "INTEGRADO",
+      "reason": "HTML definitivo integrado como módulo funcional."
+    },
+    {
+      "area": "PWA/cache",
+      "status": "INTEGRADO",
+      "reason": "Versionado de caché actualizado para esta compilación."
+    }
+  ]
+}

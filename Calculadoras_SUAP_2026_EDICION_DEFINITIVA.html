@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calculadoras SUAP 2026 · Edición definitiva</title>
+<style>
+:root{--navy:#173b57;--sea:#bfdcd7;--mint:#ddebe4;--sand:#e9dcc9;--rose:#e7c9c9;--ink:#26343d;--bg:#f5f7f8}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--navy);color:white;padding:20px}header h1{margin:0;font-size:26px}header p{margin:5px 0 0;opacity:.9}
+main{max-width:900px;margin:auto;padding:16px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+button{border:0;border-radius:12px;padding:12px 15px;font-weight:700;cursor:pointer}.tabs button{background:white;color:var(--navy);box-shadow:0 1px 5px #0002}.tabs button.active{background:var(--sea)}
+.card{background:white;border-radius:16px;padding:18px;box-shadow:0 2px 10px #0001;margin-bottom:14px}.hidden{display:none}
+label{font-weight:700;display:block;margin:10px 0 5px}input,select{width:100%;padding:12px;border:1px solid #ccd5da;border-radius:10px;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.result{margin-top:14px;padding:14px;border-radius:12px;background:var(--mint);font-size:17px}
+.warn{background:var(--rose);padding:12px;border-radius:12px;margin-top:12px}.note{background:var(--sand);padding:12px;border-radius:12px;margin-top:12px}
+table{width:100%;border-collapse:collapse;margin-top:12px}th,td{padding:9px;border-bottom:1px solid #dde3e6;text-align:left}th{background:#e8f0f5}
+.small{font-size:13px;color:#65727a}footer{max-width:900px;margin:auto;padding:0 16px 25px;color:#65727a;font-size:12px}
+@media(max-width:600px){
+ header{padding:14px 15px} header h1{font-size:22px}
+ main{padding:10px}.tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+ .tabs button{padding:11px 7px;font-size:13px}.card{padding:14px;border-radius:13px}
+ h2{font-size:20px;margin-top:2px}.grid{grid-template-columns:1fr}
+ table{font-size:12.5px}th,td{padding:7px 5px}
+ input,select{font-size:16px}
+}
+.sticky-note{background:#fff;border-left:5px solid var(--navy);padding:10px 12px;border-radius:8px;margin-bottom:12px;font-size:13px}
+.danger{font-weight:800;color:#7b2020}
+</style></head><body>
+<header><a href="index.html" style="display:inline-block;margin-bottom:10px;color:white;font-weight:800;text-decoration:none">← Volver a SUAP</a><h1>Calculadoras SUAP 2026</h1><p>EDICIÓN DEFINITIVA · Pediatría · dosis/volumen · perfusiones · escalas · urgencias.</p></header>
+<main>
+<div class="tabs">
+<button onclick="show('ped',this)" class="active">Pediatría</button>
+<button onclick="show('vol',this)">mg ↔ mL</button>
+<button onclick="show('nor',this)">Noradrenalina</button>
+<button onclick="show('pedmed',this)">Fármacos pediátricos</button>
+<button onclick="show('burn',this)">Quemaduras</button>
+<button onclick="show('glasgow',this)">Glasgow</button>
+<button onclick="show('race',this)">RACE</button>
+<button onclick="show('rsi',this)">RSI / sedación</button>
+<button onclick="show('hyperk',this)">HiperK</button>
+<button onclick="show('inf',this)">Perfusión genérica</button>
+<button onclick="show('crb',this)">CRB-65</button>
+<button onclick="show('peds',this)">RCP pediátrica</button>
+<button onclick="show('conc',this)">Concentraciones</button>
+</div>
+<div class="sticky-note"><b>Regla de seguridad:</b> antes de administrar, comprobar <b>peso → dosis → concentración real → volumen → vía → velocidad → dosis máxima</b>. Las calculadoras no sustituyen CIMA/AEMPS ni protocolos SAS/061.</div>
+
+<section id="ped" class="card">
+<h2>Pediatría por peso</h2>
+<div class="note">Escriba el peso y el resultado se recalcula al instante. Para una urgencia concreta, confirme después la ficha correspondiente de <b>SUAP Rápido</b>.</div>
+<label>Peso (kg)</label><input id="kg" type="number" min="0.5" max="150" step="0.1" value="18" oninput="ped()">
+<div id="pedout"></div>
+<div class="warn"><b>Doble comprobación:</b> confirmar indicación, edad, dosis máxima y concentración real antes de administrar. Las dosis mostradas son las referencias ya incluidas en SUAP Rápido 2026.</div>
+</section>
+
+<section id="vol" class="card hidden">
+<h2>Conversor dosis → volumen</h2>
+<div class="grid"><div><label>Dosis necesaria</label><input id="dose" type="number" step="any" value="10" oninput="vol()"></div>
+<div><label>Concentración (misma unidad/mL)</label><input id="conc" type="number" step="any" value="5" oninput="vol()"></div></div>
+<div id="volout" class="result"></div>
+<div class="note">Fórmula: <b>mL = dosis necesaria ÷ concentración real</b>. Use la misma unidad en ambos campos: mg con mg/mL, µg con µg/mL o UI con UI/mL.</div>
+</section>
+
+<section id="nor" class="card hidden">
+<h2>Perfusión de noradrenalina</h2>
+<div class="grid">
+<div><label>Peso (kg)</label><input id="nkg" type="number" step="0.1" value="70" oninput="nor()"></div>
+<div><label>Dosis (µg/kg/min)</label><input id="ndose" type="number" step="0.01" value="0.1" oninput="nor()"></div>
+<div><label>Noradrenalina total (mg)</label><input id="nmg" type="number" step="0.1" value="4" oninput="nor()"></div>
+<div><label>Volumen final (mL)</label><input id="nml" type="number" step="1" value="50" oninput="nor()"></div>
+</div>
+<div id="norout" class="result"></div>
+<div class="warn"><b>Alerta de concentración:</b> CIMA incluye concentrados de noradrenalina 1 mg/mL y productos cuya dilución recomendada resulta en 40 µg/mL. Esta calculadora NO presupone una dilución: calcula desde los mg y el volumen final que usted introduzca.</div>
+</section>
+
+<section id="pedmed" class="card hidden">
+<h2>Fármacos pediátricos críticos</h2>
+<label>Peso (kg)</label><input id="pkg2" type="number" min="0.5" max="150" step="0.1" value="18" oninput="pedmed()">
+<div id="pedmedout"></div>
+<div class="warn"><b>Seguridad:</b> tabla de cálculo, no prescripción automática. Confirmar indicación, dosis máxima, vía, concentración comercial y protocolo pediátrico vigente.</div>
+</section>
+
+<section id="burn" class="card hidden">
+<h2>Quemaduras · estimación inicial</h2>
+<div class="grid"><div><label>Peso (kg)</label><input id="bkg" type="number" step="0.1" value="70" oninput="burn()"></div>
+<div><label>SCQ quemada (%)</label><input id="bsa" type="number" min="0" max="100" step="1" value="25" oninput="burn()"></div></div>
+<div id="burnout" class="result"></div>
+<div class="warn"><b>Adulto con gran quemadura:</b> esta herramienta usa la referencia inicial 2 mL/kg/%SCQ ya incorporada en la Guía Maestra. La fluidoterapia real se titula por respuesta clínica/diuresis y protocolo del centro de quemados. El tiempo se cuenta desde la quemadura.</div>
+</section>
+
+<section id="glasgow" class="card hidden">
+<h2>Escala de Glasgow</h2>
+<div class="grid">
+<div><label>Ocular</label><select id="ge" onchange="gcs()"><option value="4">4 · Espontánea</option><option value="3">3 · A la voz</option><option value="2">2 · Al dolor</option><option value="1">1 · Ninguna</option></select></div>
+<div><label>Verbal</label><select id="gv" onchange="gcs()"><option value="5">5 · Orientada</option><option value="4">4 · Confusa</option><option value="3">3 · Palabras inapropiadas</option><option value="2">2 · Sonidos incomprensibles</option><option value="1">1 · Ninguna</option></select></div>
+<div><label>Motora</label><select id="gm" onchange="gcs()"><option value="6">6 · Obedece órdenes</option><option value="5">5 · Localiza dolor</option><option value="4">4 · Retirada</option><option value="3">3 · Flexión anormal</option><option value="2">2 · Extensión</option><option value="1">1 · Ninguna</option></select></div>
+</div><div id="gout" class="result"></div>
+<div class="note">Registrar también componentes: E/V/M, no solo el total. En TCE, GCS ≤8 obliga a valorar protección avanzada de vía aérea dentro del contexto clínico.</div>
+</section>
+
+<section id="race" class="card hidden">
+<h2>RACE · sospecha de oclusión de gran vaso</h2>
+<div class="grid">
+<div><label>Paresia facial</label><select id="r1" onchange="race()"><option value="0">0 · Ausente</option><option value="1">1 · Leve</option><option value="2">2 · Moderada/grave</option></select></div>
+<div><label>Paresia brazo</label><select id="r2" onchange="race()"><option value="0">0 · Normal/leve</option><option value="1">1 · Moderada</option><option value="2">2 · Grave</option></select></div>
+<div><label>Paresia pierna</label><select id="r3" onchange="race()"><option value="0">0 · Normal/leve</option><option value="1">1 · Moderada</option><option value="2">2 · Grave</option></select></div>
+<div><label>Desviación oculocefálica</label><select id="r4" onchange="race()"><option value="0">0 · Ausente</option><option value="1">1 · Presente</option></select></div>
+<div><label>Afasia · usar si hemiparesia derecha</label><select id="r5" onchange="race()"><option value="0">0 · Normal</option><option value="1">1 · Moderada</option><option value="2">2 · Grave</option></select></div>
+<div><label>Agnosia · usar si hemiparesia izquierda</label><select id="r6" onchange="race()"><option value="0">0 · Normal</option><option value="1">1 · Moderada</option><option value="2">2 · Grave</option></select></div>
+</div><div id="rout" class="result"></div>
+<div class="warn">RACE es una herramienta prehospitalaria de cribado, no diagnostica una oclusión de gran vaso y no debe utilizarse aisladamente para decidir destino/bypass: aplicar protocolo Código Ictus/061 vigente.</div>
+</section>
+
+<section id="rsi" class="card hidden">
+<h2>RSI / sedoanalgesia · cálculo por peso</h2>
+<label>Peso (kg)</label><input id="rkg" type="number" min="1" max="250" step="0.1" value="70" oninput="rsi()">
+<div id="rsiout"></div>
+<div class="warn"><b>Alto riesgo:</b> son rangos de referencia de la Guía SUAP. Elegir fármaco y dosis según fisiología, edad, shock, comorbilidad y protocolo. Confirmar concentración real antes de convertir a mL.</div>
+</section>
+
+<section id="hyperk" class="card hidden">
+<h2>Hiperpotasemia · insulina + glucosa</h2>
+<div class="grid">
+<div><label>Insulina regular (UI)</label><input id="hui" type="number" min="0" step="1" value="10" oninput="hyperk()"></div>
+<div><label>Concentración insulina (UI/mL)</label><input id="hconc" type="number" min="1" step="1" value="100" oninput="hyperk()"></div>
+<div><label>Glucosa necesaria (g)</label><input id="hg" type="number" min="0" step="1" value="25" oninput="hyperk()"></div>
+<div><label>Solución glucosada</label><select id="hsol" onchange="hyperk()"><option value="100">G10 · 100 mg/mL</option><option value="200">G20 · 200 mg/mL</option><option value="500">G50 · 500 mg/mL</option></select></div>
+</div><div id="hout" class="result"></div>
+<div class="warn"><b>Monitorización:</b> glucemias seriadas tras insulina. El calcio IV estabiliza membrana si hay cambios ECG, pero <b>no reduce el potasio</b>. CaCl₂ y gluconato cálcico no son equivalentes por volumen.</div>
+</section>
+
+<section id="inf" class="card hidden">
+<h2>Perfusión genérica · µg/kg/min → mL/h</h2>
+<div class="grid">
+<div><label>Peso (kg)</label><input id="ikg" type="number" step="0.1" value="70" oninput="inf()"></div>
+<div><label>Dosis (µg/kg/min)</label><input id="idose" type="number" step="0.001" value="0.1" oninput="inf()"></div>
+<div><label>Fármaco total (mg)</label><input id="img" type="number" step="0.1" value="4" oninput="inf()"></div>
+<div><label>Volumen final (mL)</label><input id="iml" type="number" step="1" value="50" oninput="inf()"></div>
+</div><div id="iout" class="result"></div>
+<div class="note">Fórmula universal para una prescripción en µg/kg/min: concentración final = mg × 1000 ÷ mL; velocidad = dosis × peso × 60 ÷ concentración.</div>
+</section>
+
+<section id="crb" class="card hidden">
+<h2>CRB-65 · neumonía adquirida en la comunidad</h2>
+<div class="grid">
+<div><label>Confusión nueva</label><select id="c1" onchange="crb()"><option value="0">No</option><option value="1">Sí</option></select></div>
+<div><label>FR ≥30/min</label><select id="c2" onchange="crb()"><option value="0">No</option><option value="1">Sí</option></select></div>
+<div><label>PA sistólica &lt;90 o diastólica ≤60</label><select id="c3" onchange="crb()"><option value="0">No</option><option value="1">Sí</option></select></div>
+<div><label>Edad ≥65 años</label><select id="c4" onchange="crb()"><option value="0">No</option><option value="1">Sí</option></select></div>
+</div><div id="crbout" class="result"></div>
+<div class="warn">CRB-65 apoya estratificación, pero no sustituye juicio clínico. Hipoxemia, sepsis, comorbilidad descompensada, incapacidad para tratamiento oral o situación social pueden modificar el destino.</div>
+</section>
+
+<section id="peds" class="card hidden">
+<h2>RCP pediátrica · dosis rápidas por peso</h2>
+<label>Peso (kg)</label><input id="cpkg" type="number" min="1" max="150" step="0.1" value="18" oninput="peds()">
+<div id="pedsout"></div>
+<div class="warn"><b>Comprobar algoritmo ERC pediátrico vigente y desfibrilador.</b> Esta pantalla calcula magnitudes por peso; no sustituye la secuencia de SVA pediátrico.</div>
+</section>
+
+<section id="conc" class="card hidden">
+<h2>Concentraciones y conversiones rápidas</h2>
+<div id="concout">
+<table>
+<tr><th>Preparación</th><th>Conversión rápida</th></tr>
+<tr><td>Adrenalina 1 mg/mL</td><td>0,1 mg = 0,1 mL · 0,5 mg = 0,5 mL</td></tr>
+<tr><td>Amiodarona 50 mg/mL</td><td>150 mg = 3 mL · 300 mg = 6 mL</td></tr>
+<tr><td>Adenosina 3 mg/mL</td><td>6 mg = 2 mL · 12 mg = 4 mL</td></tr>
+<tr><td>Fentanilo 50 µg/mL</td><td>25 µg = 0,5 mL · 50 µg = 1 mL</td></tr>
+<tr><td>Naloxona 0,4 mg/mL</td><td>0,04 mg = 0,1 mL · 0,4 mg = 1 mL</td></tr>
+<tr><td>MgSO4 500 mg/mL</td><td>1 g = 2 mL · 2 g = 4 mL · 5 g = 10 mL</td></tr>
+<tr><td>Insulina 100 UI/mL</td><td>5 UI = 0,05 mL · 10 UI = 0,1 mL</td></tr>
+<tr><td>Glucosa 10%</td><td>100 mg/mL · 25 g = 250 mL</td></tr>
+<tr><td>Glucosa 20%</td><td>200 mg/mL · 25 g = 125 mL</td></tr>
+<tr><td>Glucosa 50%</td><td>500 mg/mL · 25 g = 50 mL</td></tr>
+</table></div>
+<div class="warn"><b>No memorizar el volumen sin mirar la ampolla.</b> Si la presentación real es distinta, use el conversor dosis → mL de esta herramienta.</div>
+</section>
+</main>
+<footer>Edición definitiva 2026 · Uso profesional. No sustituye protocolos SAS/061, ficha técnica CIMA/AEMPS ni juicio clínico. Verifique siempre presentación, concentración, dosis máxima y programación de bomba. Los cálculos se realizan localmente en el dispositivo; esta página no necesita enviar los datos introducidos a un servidor.</footer>
+<script>
+function show(id,b){document.querySelectorAll('section.card').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
+function f(x,d=2){return Number(x).toLocaleString('es-ES',{maximumFractionDigits:d})}
+function ped(){
+ let k=+document.getElementById('kg').value;if(!k||k<=0){pedout.innerHTML='';return}
+ let ana=Math.min(.01*k,.5), g10=2*k, oral=.3*k, gluc=.03*k;
+ let glucPr=k<25?.5:1;
+ document.getElementById('pedout').innerHTML=`<table><tr><th>Situación</th><th>Cálculo</th><th>Resultado</th></tr>
+ <tr><td>Anafilaxia: adrenalina IM 1 mg/mL</td><td>0,01 mg/kg = 0,01 mL/kg; máx 0,5 mg</td><td><b>${f(ana,2)} mg = ${f(ana,2)} mL</b></td></tr>
+ <tr><td>Hipoglucemia sin deglución: glucosa 10%</td><td>2 mL/kg</td><td><b>${f(g10,1)} mL</b></td></tr>
+ <tr><td>Hipoglucemia consciente: glucosa oral</td><td>~0,3 g/kg</td><td><b>${f(oral,1)} g</b></td></tr>
+ <tr><td>Glucagón IM/SC</td><td>0,03 mg/kg; referencia práctica 0,5 mg &lt;25 kg / 1 mg &gt;25 kg</td><td><b>por peso: ${f(gluc,2)} mg; práctica: ${f(glucPr,1)} mg</b></td></tr>
+ <tr><td>Shock: cristaloide isotónico</td><td>10 mL/kg y reevaluar</td><td><b>${f(10*k,0)} mL</b></td></tr></table>`;
+}
+function vol(){let d=+dose.value,c=+conc.value;volout.innerHTML=(d>=0&&c>0)?`Volumen = <b>${f(d/c,3)} mL</b>`:'Introduzca valores válidos.'}
+function nor(){let k=+nkg.value,d=+ndose.value,mg=+nmg.value,ml=+nml.value;if(k>0&&d>=0&&mg>0&&ml>0){let conc=mg*1000/ml,rate=d*k*60/conc;norout.innerHTML=`Concentración final: <b>${f(conc,1)} µg/mL</b><br>Velocidad: <b>${f(rate,2)} mL/h</b><br><span class="small">(${f(d,3)} µg/kg/min × ${f(k,1)} kg × 60 ÷ ${f(conc,1)} µg/mL)</span>`}else norout.innerHTML='Introduzca valores válidos.'}
+ped();vol();nor();
+
+function pedmed(){
+ let k=+document.getElementById('pkg2').value;if(!k||k<=0){pedmedout.innerHTML='';return}
+ let levLow=Math.min(40*k,4500), levHigh=Math.min(60*k,4500);
+ let manLow=.5*k, manHigh=1*k, salLow=2.5*k, salHigh=5*k;
+ document.getElementById('pedmedout').innerHTML=`<table><tr><th>Fármaco/situación</th><th>Referencia</th><th>Resultado para ${f(k,1)} kg</th></tr>
+ <tr><td>Adrenalina IM · anafilaxia 1 mg/mL</td><td>0,01 mg/kg; máx 0,5 mg</td><td><b>${f(Math.min(.01*k,.5),2)} mg = ${f(Math.min(.01*k,.5),2)} mL</b></td></tr>
+ <tr><td>Levetiracetam · status</td><td>40–60 mg/kg; máx 4,5 g</td><td><b>${f(levLow,0)}–${f(levHigh,0)} mg</b></td></tr>
+ <tr><td>Glucosa 10% · hipoglucemia</td><td>2 mL/kg</td><td><b>${f(2*k,1)} mL</b></td></tr>
+ <tr><td>Cristaloide isotónico · shock</td><td>10 mL/kg y reevaluar</td><td><b>${f(10*k,0)} mL</b></td></tr>
+ <tr><td>Manitol · sospecha lesión cerebral en CAD</td><td>0,5–1 g/kg</td><td><b>${f(manLow,1)}–${f(manHigh,1)} g</b></td></tr>
+ <tr><td>Salino hipertónico 3% · alternativa en lesión cerebral CAD</td><td>2,5–5 mL/kg</td><td><b>${f(salLow,1)}–${f(salHigh,1)} mL</b></td></tr></table>`;
+}
+function burn(){let k=+bkg.value,s=+bsa.value;if(k>0&&s>=0){let total=2*k*s;burnout.innerHTML=`Estimación primeras 24 h: <b>${f(total,0)} mL</b><br>Referencia temporal: aproximadamente <b>${f(total/2,0)} mL</b> en las primeras 8 h desde la quemadura y el resto durante las 16 h siguientes, siempre titulado por respuesta.`}else burnout.innerHTML='Introduzca valores válidos.'}
+function gcs(){let e=+ge.value,v=+gv.value,m=+gm.value,t=e+v+m;gout.innerHTML=`Glasgow: <b>${t}/15</b> · E${e} V${v} M${m}`;}
+function race(){
+ let base=+r1.value + +r2.value + +r3.value + +r4.value;
+ let cortical=Math.max(+r5.value,+r6.value);
+ let t=base+cortical;
+ rout.innerHTML=`RACE: <b>${t}/9</b>${t>=5?' · cribado con sospecha elevada de oclusión de gran vaso; aplicar circuito Código Ictus vigente.':' · interpretar junto al cuadro clínico y protocolo local.'}<br><span class="small">La función cortical se puntúa como afasia en hemiparesia derecha O agnosia en hemiparesia izquierda; no se suman ambas.</span>`;
+}
+pedmed();burn();gcs();race();
+
+function rsi(){
+ let k=+rkg.value;if(!(k>0)){rsiout.innerHTML='';return}
+ let rows=[
+ ['Ketamina · analgesia IV','0,1–0,3 mg/kg',.1*k,.3*k],
+ ['Fentanilo IV','0,5–1 µg/kg',.5*k,1*k],
+ ['Ketamina · inducción RSI','1–2 mg/kg',1*k,2*k],
+ ['Etomidato · inducción','0,3 mg/kg',.3*k,.3*k],
+ ['Rocuronio · RSI','1,2 mg/kg',1.2*k,1.2*k],
+ ['Succinilcolina · RSI','1–1,5 mg/kg',1*k,1.5*k]
+ ];
+ rsiout.innerHTML='<table><tr><th>Fármaco</th><th>Referencia</th><th>Resultado</th></tr>'+rows.map((x,i)=>`<tr><td>${x[0]}</td><td>${x[1]}</td><td><b>${f(x[2],1)}${x[2]!=x[3]?'–'+f(x[3],1):''} ${i==1?'µg':'mg'}</b></td></tr>`).join('')+'</table>';
+}
+function hyperk(){
+ let ui=+hui.value,c=+hconc.value,g=+hg.value,mgml=+hsol.value;
+ if(ui>=0&&c>0&&g>=0&&mgml>0){
+   let iv=ui/c, gv=g*1000/mgml;
+   hout.innerHTML=`Insulina: <b>${f(ui,1)} UI = ${f(iv,3)} mL</b> a ${f(c,0)} UI/mL<br>Glucosa: <b>${f(g,1)} g = ${f(gv,1)} mL</b> de la solución seleccionada.`;
+ } else hout.innerHTML='Introduzca valores válidos.';
+}
+function inf(){
+ let k=+ikg.value,d=+idose.value,mg=+img.value,ml=+iml.value;
+ if(k>0&&d>=0&&mg>0&&ml>0){
+   let c=mg*1000/ml, rate=d*k*60/c;
+   iout.innerHTML=`Concentración final: <b>${f(c,2)} µg/mL</b><br>Velocidad de bomba: <b>${f(rate,2)} mL/h</b><br><span class="small">Comprobar que la prescripción realmente está expresada en µg/kg/min.</span>`;
+ } else iout.innerHTML='Introduzca valores válidos.';
+}
+rsi();hyperk();inf();
+
+function crb(){
+ let t=[c1,c2,c3,c4].reduce((s,x)=>s+(+x.value),0);
+ let msg=t===0?'Riesgo bajo por CRB-65; integrar clínica y contexto.':t<=2?'Riesgo aumentado; valorar evaluación hospitalaria según clínica/contexto.':'Riesgo alto; requiere valoración hospitalaria urgente.';
+ crbout.innerHTML=`CRB-65: <b>${t}/4</b><br>${msg}`;
+}
+function peds(){
+ let k=+cpkg.value;if(!(k>0)){pedsout.innerHTML='';return}
+ let epi=.01*k, epiVol=epi/0.1; // 0.1 mg/mL = 1:10,000
+ let joule4=4*k, amio=5*k;
+ pedsout.innerHTML=`<table><tr><th>Elemento</th><th>Referencia</th><th>Resultado para ${f(k,1)} kg</th></tr>
+ <tr><td>Desfibrilación</td><td>4 J/kg</td><td><b>${f(joule4,0)} J</b></td></tr>
+ <tr><td>Adrenalina IV/IO en PCR</td><td>10 µg/kg = 0,01 mg/kg</td><td><b>${f(epi,3)} mg</b></td></tr>
+ <tr><td>Si solución final 0,1 mg/mL</td><td>volumen = mg ÷ 0,1</td><td><b>${f(epiVol,2)} mL</b></td></tr>
+ <tr><td>Amiodarona</td><td>5 mg/kg</td><td><b>${f(amio,1)} mg</b></td></tr></table>`;
+}
+crb();peds();
+</script></body></html>
